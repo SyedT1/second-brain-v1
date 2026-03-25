@@ -1,10 +1,10 @@
-package com.example.secondbrainv1;
+package com.secondbrain;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SecondBrainV1ApplicationTests {
+class SecondBrainApplicationTests {
 
     @Test
     void contextLoads() {
