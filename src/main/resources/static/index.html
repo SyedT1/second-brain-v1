@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Second Brain - AI-Powered Knowledge Base</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🧠 Second Brain</h1>
+            <p class="subtitle">AI-Powered Knowledge Management with Groq LLM</p>
+        </header>
+
+        <!-- Create Entry Form -->
+        <section class="create-section">
+            <h2>Create New Entry</h2>
+            <form id="createForm" class="create-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="type">Type</label>
+                        <select id="type" name="type" required>
+                            <option value="NOTE">📝 Note</option>
+                            <option value="IDEA">💡 Idea</option>
+                            <option value="LINK">🔗 Link</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" name="title" placeholder="Enter title..." required>
+                    </div>
+                </div>
+
+                <div class="form-group" id="urlGroup" style="display: none;">
+                    <label for="url">URL</label>
+                    <input type="url" id="url" name="url" placeholder="https://example.com">
+                </div>
+
+                <div class="form-group">
+                    <label for="content">Content</label>
+                    <textarea id="content" name="content" rows="6" placeholder="Enter your content here... (AI will automatically generate tags and summary)" required></textarea>
+                </div>
+
+                <button type="submit" class="btn-primary" id="submitBtn">
+                    <span class="btn-text">Create Entry</span>
+                    <span class="loader" style="display: none;"></span>
+                </button>
+            </form>
+        </section>
+
+        <!-- Search/Filter -->
+        <section class="search-section">
+            <div class="search-bar">
+                <input type="text" id="searchInput" placeholder="🔍 Search entries by title, content, or tags...">
+            </div>
+        </section>
+
+        <!-- Entries List -->
+        <section class="entries-section">
+            <div class="section-header">
+                <h2>Your Knowledge Base</h2>
+                <span id="entryCount" class="entry-count">0 entries</span>
+            </div>
+            <div id="entriesList" class="entries-list">
+                <!-- Entries will be loaded here -->
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
