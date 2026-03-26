@@ -3,69 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Second Brain - AI-Powered Knowledge Base</title>
+    <title>Second Brain - Advanced Knowledge Management</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- Header with Navigation -->
         <header class="header">
-            <h1>🧠 Second Brain</h1>
-            <p class="subtitle">AI-Powered Knowledge Management with Groq LLM</p>
+            <div class="header-content">
+                <h1>🧠 Second Brain</h1>
+                <p class="subtitle">AI-Powered Knowledge Management with Groq LLM</p>
+            </div>
+            <nav class="main-nav">
+                <button class="nav-btn active" data-tab="entries">📚 Entries</button>
+                <button class="nav-btn" data-tab="insights">✨ Insights</button>
+                <button class="nav-btn" data-tab="analytics">📊 Analytics</button>
+                <button class="nav-btn" data-tab="transform">🎯 Transform</button>
+            </nav>
         </header>
 
-        <!-- Create Entry Form -->
-        <section class="create-section">
-            <h2>Create New Entry</h2>
-            <form id="createForm" class="create-form">
-                <div class="form-row">
+        <!-- Tab: Entries (Create & Browse) -->
+        <section id="entries-tab" class="tab-content active">
+            <!-- Create Entry Form -->
+            <section class="create-section">
+                <h2>Create New Entry</h2>
+                <form id="createForm" class="create-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="type">Type</label>
+                            <select id="type" name="type" required>
+                                <option value="NOTE">📝 Note</option>
+                                <option value="IDEA">💡 Idea</option>
+                                <option value="LINK">🔗 Link</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="title">Title</label>
+                            <input type="text" id="title" name="title" placeholder="Enter title..." required>
+                        </div>
+                    </div>
+
+                    <div class="form-group" id="urlGroup" style="display: none;">
+                        <label for="url">URL</label>
+                        <input type="url" id="url" name="url" placeholder="https://example.com">
+                    </div>
+
                     <div class="form-group">
-                        <label for="type">Type</label>
-                        <select id="type" name="type" required>
-                            <option value="NOTE">📝 Note</option>
-                            <option value="IDEA">💡 Idea</option>
-                            <option value="LINK">🔗 Link</option>
+                        <label for="content">Content</label>
+                        <textarea id="content" name="content" rows="6" placeholder="Enter your content here... (AI will automatically generate tags and summary)" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="submitBtn">
+                        <span class="btn-text">Create Entry</span>
+                        <span class="loader" style="display: none;"></span>
+                    </button>
+                </form>
+            </section>
+
+            <!-- Search/Filter Bar -->
+            <section class="search-section">
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="🔍 Search entries by title, content, or tags...">
+                </div>
+            </section>
+
+            <!-- Entries List -->
+            <section class="entries-section">
+                <div class="section-header">
+                    <h2>Your Knowledge Base</h2>
+                    <span id="entryCount" class="entry-count">0 entries</span>
+                </div>
+                <div id="entriesList" class="entries-list">
+                    <!-- Entries will be loaded here -->
+                </div>
+            </section>
+        </section>
+
+        <!-- Tab: Insights (Resurfaced Knowledge) -->
+        <section id="insights-tab" class="tab-content">
+            <h2>✨ Insights & Forgotten Knowledge</h2>
+
+            <div class="insights-container">
+                <div class="insight-card">
+                    <h3>30 Days Old</h3>
+                    <p class="insight-desc">Knowledge you haven't revisited in a month</p>
+                    <div id="insights-30" class="insights-list"></div>
+                </div>
+
+                <div class="insight-card">
+                    <h3>60 Days Old</h3>
+                    <p class="insight-desc">Forgotten gems from 2 months ago</p>
+                    <div id="insights-60" class="insights-list"></div>
+                </div>
+
+                <div class="insight-card">
+                    <h3>90 Days Old</h3>
+                    <p class="insight-desc">Ancient wisdom you might have missed</p>
+                    <div id="insights-90" class="insights-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tab: Analytics (Expertise & Knowledge Gaps) -->
+        <section id="analytics-tab" class="tab-content">
+            <h2>📊 Intelligence Report</h2>
+
+            <!-- Expertise Section -->
+            <div class="analytics-section">
+                <h3>🎓 Your Expertise Map</h3>
+                <p class="section-desc">Areas where you've built deep knowledge</p>
+                <div id="expertiseChart" class="expertise-chart"></div>
+            </div>
+
+            <!-- Knowledge Gaps Section -->
+            <div class="analytics-section">
+                <h3>🔍 Knowledge Gaps</h3>
+                <p class="section-desc">Suggested areas for learning based on your knowledge base</p>
+                <div id="knowledgeGapsReport" class="knowledge-gaps-report"></div>
+            </div>
+        </section>
+
+        <!-- Tab: Transform (Entry Transformations) -->
+        <section id="transform-tab" class="tab-content">
+            <h2>🎯 Transform Entries</h2>
+
+            <div class="transform-container">
+                <div class="transform-form">
+                    <h3>Select an Entry to Transform</h3>
+                    <div class="form-group">
+                        <select id="entrySelect" class="form-control">
+                            <option value="">Choose an entry...</option>
                         </select>
                     </div>
 
-                    <div class="form-group">
-                        <label for="title">Title</label>
-                        <input type="text" id="title" name="title" placeholder="Enter title..." required>
+                    <h3>Choose Format</h3>
+                    <div class="format-grid">
+                        <button class="format-btn" data-format="TWEET_THREAD">
+                            <span class="format-icon">🐦</span>
+                            <span class="format-name">Tweet Thread</span>
+                        </button>
+                        <button class="format-btn" data-format="ACTION_ITEMS">
+                            <span class="format-icon">✅</span>
+                            <span class="format-name">Action Items</span>
+                        </button>
+                        <button class="format-btn" data-format="PRODUCT_BRIEF">
+                            <span class="format-icon">📋</span>
+                            <span class="format-name">Product Brief</span>
+                        </button>
+                        <button class="format-btn" data-format="EMAIL">
+                            <span class="format-icon">📧</span>
+                            <span class="format-name">Email</span>
+                        </button>
+                        <button class="format-btn" data-format="BLOG_POST">
+                            <span class="format-icon">📝</span>
+                            <span class="format-name">Blog Post</span>
+                        </button>
+                        <button class="format-btn" data-format="LINKEDIN_POST">
+                            <span class="format-icon">💼</span>
+                            <span class="format-name">LinkedIn Post</span>
+                        </button>
                     </div>
+
+                    <button id="transformBtn" class="btn-primary" style="margin-top: 1.5rem;">
+                        <span class="btn-text">Transform</span>
+                        <span class="loader" style="display: none;"></span>
+                    </button>
                 </div>
 
-                <div class="form-group" id="urlGroup" style="display: none;">
-                    <label for="url">URL</label>
-                    <input type="url" id="url" name="url" placeholder="https://example.com">
+                <div class="transform-output">
+                    <h3>Transformed Output</h3>
+                    <div id="transformResult" class="transform-result">
+                        <p style="color: #999; text-align: center;">Output will appear here...</p>
+                    </div>
+                    <button id="copyResult" class="btn-secondary" style="display: none; margin-top: 1rem;">
+                        📋 Copy to Clipboard
+                    </button>
                 </div>
-
-                <div class="form-group">
-                    <label for="content">Content</label>
-                    <textarea id="content" name="content" rows="6" placeholder="Enter your content here... (AI will automatically generate tags and summary)" required></textarea>
-                </div>
-
-                <button type="submit" class="btn-primary" id="submitBtn">
-                    <span class="btn-text">Create Entry</span>
-                    <span class="loader" style="display: none;"></span>
-                </button>
-            </form>
-        </section>
-
-        <!-- Search/Filter -->
-        <section class="search-section">
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="🔍 Search entries by title, content, or tags...">
-            </div>
-        </section>
-
-        <!-- Entries List -->
-        <section class="entries-section">
-            <div class="section-header">
-                <h2>Your Knowledge Base</h2>
-                <span id="entryCount" class="entry-count">0 entries</span>
-            </div>
-            <div id="entriesList" class="entries-list">
-                <!-- Entries will be loaded here -->
             </div>
         </section>
     </div>

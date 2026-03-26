@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -41,4 +42,7 @@ public interface EntryRepository extends JpaRepository<Entry, Long> {
         ORDER BY e.created_at DESC
         """, nativeQuery = true)
     List<Entry> findByTagContainingIgnoreCase(@Param("tag") String tag);
+
+    // Knowledge Resurfacing: Find old entries
+    List<Entry> findByCreatedAtBeforeOrderByCreatedAtAsc(LocalDateTime date);
 }
