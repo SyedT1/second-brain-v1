@@ -18,17 +18,33 @@ public class EmbeddingService {
 
     private final RestClient restClient;
     private final ObjectMapper objectMapper;
+    private final boolean isEnabled;
 
-    public EmbeddingService(@Value("${openai.embedding.api-key}") String apiKey) {
-        this.restClient = RestClient.builder()
-                .baseUrl("https://api.openai.com/v1")
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-                .build();
+    public EmbeddingService(@Value("${openai.embedding.api-key:}") String apiKey) {
         this.objectMapper = new ObjectMapper();
+
+        // Check if OpenAI API key is provided
+        if (apiKey == null || apiKey.trim().isEmpty()) {
+            log.warn("OpenAI API key not configured - embeddings will be disabled");
+            this.isEnabled = false;
+            this.restClient = null;
+        } else {
+            this.isEnabled = true;
+            this.restClient = RestClient.builder()
+                    .baseUrl("https://api.openai.com/v1")
+                    .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
+                    .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+                    .build();
+            log.info("OpenAI embeddings enabled");
+        }
     }
 
     public float[] generateEmbedding(String text) {
+        if (!isEnabled) {
+            log.debug("Embeddings disabled - skipping");
+            throw new RuntimeException("OpenAI API key not configured - embeddings disabled");
+        }
+
         log.debug("Generating embedding for text length: {}", text.length());
 
         try {

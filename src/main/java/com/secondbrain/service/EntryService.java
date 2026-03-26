@@ -2,12 +2,10 @@ package com.secondbrain.service;
 
 import com.secondbrain.dto.CreateEntryRequest;
 import com.secondbrain.dto.EntryResponse;
-import com.secondbrain.event.EntryCreatedEvent;
 import com.secondbrain.model.Entry;
 import com.secondbrain.repository.EntryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 public class EntryService {
 
     private final EntryRepository entryRepository;
-    private final ApplicationEventPublisher eventPublisher;
+    private final EnrichmentService enrichmentService;
 
     @Transactional
     public EntryResponse createEntry(CreateEntryRequest request) {
@@ -38,10 +36,10 @@ public class EntryService {
         Entry savedEntry = entryRepository.save(entry);
         log.info("Entry created with ID: {}", savedEntry.getId());
 
-        // Publish event for async enrichment
-        eventPublisher.publishEvent(new EntryCreatedEvent(this, savedEntry));
+        // Enrich synchronously before returning
+        Entry enrichedEntry = enrichmentService.enrichEntry(savedEntry);
 
-        return toResponse(savedEntry);
+        return toResponse(enrichedEntry);
     }
 
     @Transactional(readOnly = true)

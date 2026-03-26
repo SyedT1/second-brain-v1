@@ -24,12 +24,12 @@ public class EnrichmentService {
     private final EmbeddingService embeddingService;
     private final LinkEnricherService linkEnricherService;
 
-    @Async("taskExecutor")
-    @EventListener
+    /**
+     * Synchronous enrichment - called directly when creating an entry
+     */
     @Transactional
-    public void handleEntryCreated(EntryCreatedEvent event) {
-        Entry entry = event.getEntry();
-        log.info("Starting async enrichment for entry ID: {}", entry.getId());
+    public Entry enrichEntry(Entry entry) {
+        log.info("Starting synchronous enrichment for entry ID: {}", entry.getId());
 
         try {
             // Reload entry in this transaction
@@ -68,9 +68,24 @@ public class EnrichmentService {
 
             log.info("Enrichment completed for entry ID: {}", managedEntry.getId());
 
+            return managedEntry;
+
         } catch (Exception e) {
             log.error("Error enriching entry ID: {}", entry.getId(), e);
+            // Return the entry as-is if enrichment fails
+            return entry;
         }
+    }
+
+    /**
+     * Async enrichment - kept for backward compatibility (currently unused)
+     */
+    @Async("taskExecutor")
+    @EventListener
+    @Transactional
+    public void handleEntryCreated(EntryCreatedEvent event) {
+        Entry entry = event.getEntry();
+        enrichEntry(entry);
     }
 
     private String buildEmbeddingText(Entry entry) {

@@ -34,11 +34,13 @@ public class TaggingService {
             """;
 
     public TaggingResult generateTagsAndSummary(String content, String title) {
-        log.debug("Generating tags and summary for content length: {}", content.length());
+        log.info("Generating tags and summary for content length: {}", content.length());
 
         try {
             String titleValue = title != null ? title : "No title";
             String contentPreview = content.length() > 2000 ? content.substring(0, 2000) : content;
+
+            log.info("Calling Groq API with title: {} and content length: {}", titleValue, contentPreview.length());
 
             String response = chatClient.prompt()
                     .user(userSpec -> userSpec.text(TAGGING_PROMPT)
@@ -47,10 +49,13 @@ public class TaggingService {
                     .call()
                     .content();
 
+            log.info("Received response from Groq API: {}", response);
+
             return parseTaggingResponse(response);
 
         } catch (Exception e) {
-            log.error("Error generating tags and summary", e);
+            log.error("Error generating tags and summary - Exception type: {}, Message: {}",
+                    e.getClass().getName(), e.getMessage(), e);
             // Return defaults on error
             return new TaggingResult(
                     List.of("uncategorized"),
